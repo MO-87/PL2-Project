@@ -74,13 +74,24 @@ public abstract class User {
     // A User class method that handles all the connections for the (register) method.
     private boolean fileConnForRegister(String VolName, String fileName, User u)
     {
-        try(BufferedWriter bw = new BufferedWriter(new FileWriter(VolName+"/"+fileName, true))) {
+        try(BufferedWriter bw = new BufferedWriter(new FileWriter(VolName+"/"+fileName, true));
+            BufferedReader br = new BufferedReader(new FileReader(VolName+"/"+fileName))) {
+
+            // A very important step to make users unique and different to each other and also to keep track with ID order.
+            String line;
+            while((line = br.readLine()) != null)
+            {
+                String[] userData = line.split(",");
+                if(userData[1].equals(u.getName(u)))
+                    return false;
+                int id_Val = Integer.parseInt(userData[0]);
+                u.setID(id_Val + 1);
+            }
+
             bw.write(u.getID() + "," + u.getName(u) + "," + u.password);
             bw.newLine();
             bw.close();
             return true; // registration succeeded.
-
-            // didn't handle the dissimilarity between users with same name and password yet.
 
         }catch (IOException e)
         {
