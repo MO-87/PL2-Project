@@ -1,10 +1,12 @@
 package Course_Management_System;
 
+import java.io.*;
 import java.util.Scanner;
 
-public class Main {
-    public static void main(String[] args)
+public class Main
+{
+    public static void main(String[] args) throws IOException
     {
-        System.out.println("This is the start for our project :)");
+        Menu.Main_Menu();
     }
 }
