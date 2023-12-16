@@ -37,19 +37,6 @@ public abstract class User {
         return u.name;
     }
 
-    public boolean register(int type, User u) // Polymorphism
-    {
-        return switch (type) {
-            case 1 ->
-                // register as a student.
-                    fileConnForRegister("StudentVol", "students.txt", u); // student registered successfully.
-            case 2 ->
-                // register as an Instructor.
-                    fileConnForRegister("InstructorVol", "instructors.txt", u); // instructor registered successfully.
-            default -> false; // invalid type input.
-        };
-    }
-
     public boolean login(int type, User u) // Polymorphism
     {
         return switch (type) {
@@ -66,40 +53,6 @@ public abstract class User {
         };
     }
 
-    public void logout()
-    {
-        // will call the main menu method when it's done.
-    }
-
-    // A User class method that handles all the connections for the (register) method.
-    private boolean fileConnForRegister(String VolName, String fileName, User u)
-    {
-        try(BufferedWriter bw = new BufferedWriter(new FileWriter(VolName+"/"+fileName, true));
-            BufferedReader br = new BufferedReader(new FileReader(VolName+"/"+fileName))) {
-
-            // A very important step to make users unique and different to each other and also to keep track with ID order.
-            String line;
-            while((line = br.readLine()) != null)
-            {
-                String[] userData = line.split(",");
-                if(userData[1].equals(u.getName(u)))
-                    return false;
-                int id_Val = Integer.parseInt(userData[0]);
-                u.setID(id_Val + 1);
-            }
-
-            bw.write(u.getID() + "," + u.getName(u) + "," + u.password);
-            bw.newLine();
-            bw.close();
-            return true; // registration succeeded.
-
-        }catch (IOException e)
-        {
-            System.err.println("Error writing to file: " + e.getMessage()); // file could not be created.
-            return false;
-        }
-    }
-
     // A User class method that handles all the connections for the (login) method.
     private boolean fileConnForLogin(String VolName, String fileName, User u) throws NumberFormatException
     {
@@ -108,7 +61,7 @@ public abstract class User {
             while ((line = br.readLine()) != null) {
                 String[] userData = line.split(",");
                 int id_Val = Integer.parseInt(userData[0]);
-                if (userData.length == 3 && userData[1].equals(u.getName(u)) && userData[2].equals(u.password)) {
+                if (userData.length >= 3 && userData[1].equals(u.name) && userData[2].equals(u.password)) {
                     u.setID(id_Val);
                     return true; // logging in succeeded.
                 }
