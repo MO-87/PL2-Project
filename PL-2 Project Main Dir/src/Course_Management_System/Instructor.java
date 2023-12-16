@@ -38,7 +38,7 @@ public class Instructor extends User {
         return null;
     }
 
-    public boolean addGrade(int studentId, String grade, String courseNameToCheck) {
+    public boolean addGrade(String idVal, String grade, String courseNameToCheck) {
         FileHandler fileHandler = new FileHandler("StudentVol/students.txt");
         boolean isInstructorAuthorized = false;
         boolean isStudentRegistered = false;
@@ -51,13 +51,13 @@ public class Instructor extends User {
 
         if (isInstructorAuthorized) {
             // Check if the student is registered for the course
-            String studentsFileContent = fileHandler.readFromFile();
+            String studentsFileContent = fileHandler.readFile();
             String[] studentLines = studentsFileContent.split("\n");
 
             for (String studentInfo : studentLines) {
                 String[] studentData = studentInfo.split(",");
-                int idValue = Integer.parseInt(studentData[0]);
-                if (idValue == studentId) {
+
+                if (studentData[0].equals(idVal)) {
                     // Assuming the course information for the student is in a specific field (you can modify accordingly)
                     // Check if the student is registered for the course
                     // For example, assuming the course name is in index 2 in the student's data
@@ -67,7 +67,7 @@ public class Instructor extends User {
 
                         // Update the grade - Assuming the grade field is the next one after the course field
                         // If the course field is found, the next field will be the grade field to update
-                        if(this.updateFieldInLine(String.valueOf(studentId), courseNameToCheck, grade))
+                        if(this.updateFieldInLine(idVal, courseNameToCheck, grade))
                             break;
                     }
                 }
