@@ -3,17 +3,28 @@ package Course_Management_System;
 import java.io.*;
 import java.util.*;
 public class FileHandler {
-    private final String path;
+    private String path;
     private FileWriter fw;
     private Scanner fr;
+
+    public FileHandler() {
+    }
 
     public FileHandler(String path) {
         this.path = path;
     }
 
+    public void createFile() {
+        try {
+            File file = new File(path);
+            file.createNewFile();
+        } catch (IOException e) {
+            System.out.println("An error occurred." + e.getMessage());
+        }
+    }
+
     public String readLine(int ID) throws IOException {
         String content;
-
         this.fr = new Scanner(new File(path));
         while(fr.hasNextLine()) {
             content = fr.nextLine();
@@ -21,7 +32,7 @@ public class FileHandler {
                 return content;
         }
         fr.close();
-        return "Employee does not exist";
+        return "Nothing";
     }
     public boolean delete(String s) {
         try {
@@ -44,14 +55,14 @@ public class FileHandler {
             return false;
         }
     }
-    public boolean update(String s, String updatedRaw) {
+    public boolean update(String line, String updatedRaw) {
         try {
             StringBuilder content = new StringBuilder();
             String temp;
             this.fr = new Scanner(new File(path));
             while(fr.hasNextLine()) {
                 temp = fr.nextLine();
-                if(!temp.equals(s)){
+                if(!temp.equals(line)){
                     content.append(temp).append("\n");
                 }
                 else {
@@ -69,16 +80,45 @@ public class FileHandler {
         }
     }
 
-    public String readFromFile() {
-        StringBuilder fileContent = new StringBuilder();
-        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                fileContent.append(line).append("\n");
+    public String readLastLine() {
+        String content = "";
+        try {
+            this.fr = new Scanner(new File(path));
+            while(fr.hasNextLine()) {
+                content = fr.nextLine();
             }
-        } catch (IOException e) {
-            System.err.println("Error reading from file: " + e.getMessage());
+            fr.close();
+            return content;
+        } catch (FileNotFoundException e) {
+            System.out.println("An error occurred." + e.getMessage());
         }
-        return fileContent.toString();
+        return content;
+    }
+
+    public boolean append(String line)  {
+        try {
+            this.fw = new FileWriter(path, true);
+            fw.append(line).append("");
+            fw.close();
+        } catch (IOException e) {
+            System.out.println("An error occurred." + e.getMessage());
+            return false ;
+        }
+        return true;
+    }
+
+    public String readFile(){
+        StringBuilder content = new StringBuilder();
+        try {
+            this.fr = new Scanner(new File(path));
+            while(fr.hasNextLine()) {
+                content.append("\n").append(fr.nextLine());
+            }
+            fr.close();
+        } catch (FileNotFoundException e) {
+            //System.out.println("An error occurred." + e.getMessage());
+            return "error";
+        }
+        return content.toString();
     }
 }
