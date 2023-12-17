@@ -58,29 +58,35 @@ public class Student extends User {
         return Courses.readFile();
     }
 
-    public boolean feedback(User u, String subjectName, String feedback) {
+    public boolean feedback(User u, String subjectName, String feedback) throws IOException {
         FileHandler F = new FileHandler("StudentVol/feedbacks.txt");
-        return F.append(u.getID() + "," + u.getName(u) + "," + subjectName + "," + feedback + "\n");
+        FileHandler F2 = new FileHandler("StudentVol/students.txt");
+        if(Admin.isCourseAlreadyExists(F2, subjectName))
+            return F.append(u.getID() + "," + u.getName(u) + "," + subjectName + "," + feedback + "\n");
+        else
+            return false;
     }
 
     public String addCourse(User u , String courseName)throws IOException
     {
         String line = CM.readLine(u.getID());
         FileHandler CF = new FileHandler("CourseVol/courses.txt");
+        FileHandler CF2 = new FileHandler("StudentVol/students.txt");
         String line2 = CF.readFile();
         String[] userData = line.split(",");
         if(userData.length == 11){
-            return "You can't add more courses";
+            return "You can't add more courses.";
         }
         else{
             if(!line2.contains(courseName))
             {
-                return "This isn't a valid course";
-            }
-            else
+                return "This isn't a valid course.";
+            } else if (Admin.isCourseAlreadyExists(CF2, courseName)) {
+                return "Course already added!";
+            } else
             {
                 CM.update(line,line+","+courseName+","+"-1");
-                return "Added";
+                return "Added.";
             }
         }
     }
