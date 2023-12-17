@@ -3,7 +3,7 @@ package Course_Management_System;
 import java.io.*;
 import java.util.*;
 public class FileHandler {
-    private String path;
+    protected String path;
     private FileWriter fw;
     private Scanner fr;
 
@@ -34,28 +34,47 @@ public class FileHandler {
         fr.close();
         return "Nothing";
     }
+
+    public String readLineByName(int Index, String name) throws IOException {
+        String content;
+        this.fr = new Scanner(new File(path));
+        while(fr.hasNextLine()) {
+            content = fr.nextLine();
+            String[] parts = content.split(",");
+            if(parts[Index].trim().equals(name.trim())) {
+                fr.close();
+                return content;
+            }
+        }
+        fr.close();
+        return "";
+    }
+
+
     public boolean delete(String s) {
         try {
             StringBuilder content = new StringBuilder();
             String temp;
+            boolean flag = false;
             this.fr = new Scanner(new File(path));
             while(fr.hasNextLine()) {
                 temp = fr.nextLine();
                 if(!temp.equals(s)){
                     content.append(temp).append("\n");
-                }
+                }else
+                    flag = true;
             }
             fr.close();
             this.fw = new FileWriter(path, false);
             fw.write(content.toString());
             fw.close();
-            return true;
+            return flag;
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+//            System.out.println(e.getMessage());
             return false;
         }
     }
-    public boolean update(String line, String updatedRaw) {
+    public boolean update(String line, String updatedRow) {
         try {
             StringBuilder content = new StringBuilder();
             String temp;
@@ -66,7 +85,7 @@ public class FileHandler {
                     content.append(temp).append("\n");
                 }
                 else {
-                    content.append(updatedRaw).append("\n");
+                    content.append(updatedRow).append("\n");
                 }
             }
             fr.close();
@@ -120,5 +139,31 @@ public class FileHandler {
             return "error";
         }
         return content.toString();
+    }
+
+    public boolean updateCourseDetails(String courseName, String room, String branch, double price,
+                                       String startDate, String endDate) {
+        try {
+            // Read the existing content of the individual course file
+            StringBuilder content = new StringBuilder();
+            String temp = "";
+            this.fr = new Scanner(new File("CourseVol/CoursePage.txt"));
+            while (fr.hasNextLine()) {
+                // Update the course details in the file
+                content.append(String.format("%s,%s,%s,%.2f,%s,%s\n",courseName,
+                        room, branch, price, startDate, endDate));
+            }
+            fr.close();
+
+            // Write the updated content back to the individual course file
+            this.fw = new FileWriter("CourseVol/CoursePage.txt", false);
+            fw.write(content.toString());
+            fw.close();
+
+            return true;
+        } catch (IOException e) {
+            System.out.println("An error occurred while updating the course details: " + e.getMessage());
+            return false;
+        }
     }
 }
